@@ -41,7 +41,7 @@ fun ArtistCard(artist: Artist,
         derivedStateOf { viewmodel.imageCache[artist.name] }
     }
 
-    Card(modifier = Modifier.height(200.dp)
+    Card(modifier = Modifier.height(225.dp)
         .padding(4.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp))
