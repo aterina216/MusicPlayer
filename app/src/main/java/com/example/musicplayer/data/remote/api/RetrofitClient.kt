@@ -1,4 +1,4 @@
-package com.example.musicplayer
+package com.example.musicplayer.data.remote.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

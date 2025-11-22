@@ -1,4 +1,4 @@
-package com.example.musicplayer
+package com.example.musicplayer.data.remote.dto
 
 data class Image(
     val text: String,

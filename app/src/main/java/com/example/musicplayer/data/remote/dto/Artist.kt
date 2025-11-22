@@ -1,4 +1,6 @@
-package com.example.musicplayer
+package com.example.musicplayer.data.remote.dto
+
+import com.example.musicplayer.data.remote.dto.Image
 
 data class Artist(
     val image: List<Image>,

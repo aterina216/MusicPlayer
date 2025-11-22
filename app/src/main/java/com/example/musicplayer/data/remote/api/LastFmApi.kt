@@ -1,5 +1,8 @@
-package com.example.musicplayer
+package com.example.musicplayer.data.remote.api
 
+import com.example.musicplayer.data.remote.response.ArtistInfoResponse
+import com.example.musicplayer.KEY
+import com.example.musicplayer.data.remote.response.LastFmResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

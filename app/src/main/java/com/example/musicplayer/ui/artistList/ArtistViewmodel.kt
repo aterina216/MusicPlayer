@@ -1,13 +1,15 @@
-package com.example.musicplayer
+package com.example.musicplayer.ui.artistList
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import com.example.musicplayer.data.remote.api.RetrofitClient
+import com.example.musicplayer.data.remote.dto.Artist
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class ArtistViewmodel: ViewModel() {
 
