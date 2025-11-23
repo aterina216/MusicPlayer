@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.musicplayer.data.remote.dto.Artist
 import com.example.musicplayer.ui.components.ArtistCard
+import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
 
 @Composable
 fun Artistscreen(artist: List<Artist>,

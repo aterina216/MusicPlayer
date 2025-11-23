@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.musicplayer.data.remote.dto.Artist
-import com.example.musicplayer.ui.artistList.ArtistViewmodel
+import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
 
 @Composable
 fun ArtistCard(artist: Artist,
