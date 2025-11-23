@@ -4,16 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.musicplayer.MusicApp
-import com.example.musicplayer.data.repository.ArtistRepositiry
 import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
 import com.example.musicplayer.ui.artistList.Artistscreen
-import com.example.musicplayer.ui.viewmodel.ViewModelFactory
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {

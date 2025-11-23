@@ -8,7 +8,7 @@ import com.example.musicplayer.data.db.ArtistDatabase
 import com.example.musicplayer.data.remote.api.DeezerApi
 import com.example.musicplayer.data.remote.api.LastFmApi
 import com.example.musicplayer.data.remote.api.RetrofitClient
-import com.example.musicplayer.data.repository.ArtistRepositiry
+import com.example.musicplayer.data.repository.ArtistRepository
 import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
 import com.example.musicplayer.ui.viewmodel.ViewModelFactory
 import dagger.Module
@@ -38,6 +38,7 @@ class AppModule(private val application: Application) {
             ArtistDatabase::class.java,
             "artists_db"
         )
+            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -73,19 +74,19 @@ class AppModule(private val application: Application) {
         lastFmApi: LastFmApi,
         dao: ArtistDao,
         deezerApi: DeezerApi
-    ): ArtistRepositiry {
-        return ArtistRepositiry(lastFmApi, dao, deezerApi)
+    ): ArtistRepository {
+        return ArtistRepository(lastFmApi, dao, deezerApi)
     }
 
     @Singleton
     @Provides
-    fun provideViewModelFactory(repo: ArtistRepositiry): ViewModelFactory {
+    fun provideViewModelFactory(repo: ArtistRepository): ViewModelFactory {
         return ViewModelFactory(repo)
     }
 
     @Singleton
     @Provides
-    fun provideViewModel(repositiry: ArtistRepositiry): ArtistViewmodel {
+    fun provideViewModel(repositiry: ArtistRepository): ArtistViewmodel {
         return ArtistViewmodel(repositiry)
     }
 }

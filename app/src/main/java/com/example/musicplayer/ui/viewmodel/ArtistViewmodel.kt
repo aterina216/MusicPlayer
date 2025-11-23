@@ -1,19 +1,17 @@
 package com.example.musicplayer.ui.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.musicplayer.data.remote.api.RetrofitClient
 import com.example.musicplayer.data.remote.dto.Artist
-import com.example.musicplayer.data.repository.ArtistRepositiry
+import com.example.musicplayer.data.repository.ArtistRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ArtistViewmodel @Inject constructor (val repository: ArtistRepositiry): ViewModel() {
+class ArtistViewmodel @Inject constructor (val repository: ArtistRepository): ViewModel() {
 
     private var artists = MutableStateFlow<List<Artist>>(emptyList())
     val _artists: StateFlow<List<Artist>> = artists.asStateFlow()
@@ -22,6 +20,7 @@ class ArtistViewmodel @Inject constructor (val repository: ArtistRepositiry): Vi
     val imageCache: StateFlow<Map<String, String>> = _imageCache.asStateFlow()
 
     init {
+        Log.d("ViewModel", "🚀 ViewModel created")
         loadTopArtists()
     }
 
@@ -32,6 +31,8 @@ class ArtistViewmodel @Inject constructor (val repository: ArtistRepositiry): Vi
 
             try {
                 val artistsList = repository.getTopArtists()
+                Log.d("ViewModel", "📊 Repository returned: ${artistsList.size} artists")
+
                 artists.value = artistsList
 
                 _imageCache.value = repository.imageCache.toMap()

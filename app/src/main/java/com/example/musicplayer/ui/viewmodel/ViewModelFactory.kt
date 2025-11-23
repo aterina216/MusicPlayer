@@ -2,11 +2,11 @@ package com.example.musicplayer.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.musicplayer.data.repository.ArtistRepositiry
+import com.example.musicplayer.data.repository.ArtistRepository
 import javax.inject.Inject
 
 class ViewModelFactory @Inject constructor(
-   private val repository: ArtistRepositiry
+   private val repository: ArtistRepository
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

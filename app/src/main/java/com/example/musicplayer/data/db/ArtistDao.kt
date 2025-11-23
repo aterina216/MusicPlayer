@@ -24,4 +24,7 @@ interface ArtistDao {
     @Query("SELECT * FROM artists ORDER BY listeners")
     fun getAllArtists(): Flow<List<Artist>>
 
+    @Query("DELETE FROM ARTISTS")
+    fun deleteAllArtists()
+
 }

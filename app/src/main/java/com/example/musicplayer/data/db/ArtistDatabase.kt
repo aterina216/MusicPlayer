@@ -9,7 +9,7 @@ import androidx.room.TypeConverters
 import com.example.musicplayer.data.remote.dto.Artist
 import kotlin.coroutines.coroutineContext
 
-@Database(entities = [Artist::class], version = 1, exportSchema = false)
+@Database(entities = [Artist::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ArtistDatabase: RoomDatabase() {
 

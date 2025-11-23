@@ -5,15 +5,14 @@ import com.example.musicplayer.data.db.ArtistDao
 import com.example.musicplayer.data.remote.api.DeezerApi
 import com.example.musicplayer.data.remote.api.LastFmApi
 import com.example.musicplayer.data.remote.dto.Artist
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
-class ArtistRepositiry @Inject constructor (
+class ArtistRepository @Inject constructor (
     private val api: LastFmApi, private val dao: ArtistDao,
     private val deezerApi: DeezerApi
 ) {
@@ -22,6 +21,36 @@ class ArtistRepositiry @Inject constructor (
     val imageCache: Map<String, String> get() = _imageCache
 
     suspend fun getTopArtists(): List<Artist> {
+
+        Log.d("Repository", "🎯 ENTERING getTopArtists()")
+
+        val cachedArtists = dao.getAllArtists().first()
+
+        Log.d("Repository", "📊 cachedArtists from DB: ${cachedArtists?.size ?: 0}")
+
+        if (cachedArtists!=null && cachedArtists.isNotEmpty()){
+
+            Log.d("Repository", "🔄 USING CACHED ARTISTS from DB")
+
+            cachedArtists.forEach { artist ->
+                Log.d("Repository", "🔍 Processing cached artist: ${artist.name}")
+                artist.image?.forEach { img ->
+                    Log.d("Repository", "   Image: size=${img.size}, url=${img.text?.take(30)}...")
+                }
+
+                artist.image?.find { it.size == "extralarge" }?.text?.let { url ->
+                    if(url.isNotBlank()) {
+                        _imageCache[artist.name] = url
+                        Log.d("Repository", "✅ Restored image from cache for ${artist.name}: ${url.take(30)}...")
+                    }
+                }
+            }
+
+            Log.d("Repository", "🎯 RETURNING CACHED: ${cachedArtists.size} artists, imageCache: ${_imageCache.size}")
+
+            return cachedArtists
+        }
+
         try {
             Log.d("Repository", "=== STARTING ARTISTS LOAD ===")
             val lastFmResponse = api.getTopArtists()
@@ -55,6 +84,16 @@ class ArtistRepositiry @Inject constructor (
                 Log.d("Repository", "Cache entry: $name -> ${url.take(30)}...")
             }
 
+            try {
+                dao.insertArtists(artists)
+                Log.d("Repository", "✅ DATABASE INSERT SUCCESS")
+            } catch (e: Exception) {
+                Log.e("Repository", "❌ DATABASE INSERT FAILED: ${e.message}")
+                // Если падает здесь - просто возвращаем artists без сохранения
+                return artists
+            }
+
+            Log.d("Repository", "AFTER DATABASE INSERT - returning artists")
             return artists
         } catch (e: Exception) {
             print("${e.message}")
