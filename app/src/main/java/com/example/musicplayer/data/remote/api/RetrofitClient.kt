@@ -7,6 +7,8 @@ object RetrofitClient {
 
     const val BASE_URL = "https://ws.audioscrobbler.com"
 
+    const val BASE_URL_FOR_DEEZER = "https://api.deezer.com/"
+
     val lastFmApi = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())

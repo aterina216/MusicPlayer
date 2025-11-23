@@ -13,6 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -37,9 +38,10 @@ fun ArtistCard(artist: Artist,
 
     Log.d("ArtistCard", "Rendering: ${artist.name}, images: ${artist.image.size}")
 
-    val imageUrl by remember(artist.name) {
-        derivedStateOf { viewmodel.imageCache[artist.name] }
-    }
+    val imageCache by viewmodel.imageCache.collectAsState()
+    val imageUrl = imageCache[artist.name]
+
+    Log.d("ArtistCard", "Rendering: ${artist.name}, imageUrl: $imageUrl")
 
     Card(modifier = Modifier.height(225.dp)
         .padding(4.dp),
