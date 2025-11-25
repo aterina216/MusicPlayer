@@ -1,5 +1,6 @@
 package com.example.musicplayer.data.remote.dto
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.musicplayer.data.remote.dto.Image
@@ -14,5 +15,8 @@ data class Artist(
     val mbid: String? = null,
     val playcount: String,
     val streamable: String,
-    val url: String
+    val url: String,
+
+    @ColumnInfo(name = "deezer_image_url")
+    val deezerImageUrl: String? = null
 )

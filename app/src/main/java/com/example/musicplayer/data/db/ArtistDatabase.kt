@@ -7,13 +7,16 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.example.musicplayer.data.remote.dto.Artist
+import com.example.musicplayer.data.remote.dto.ArtistImage
+import com.example.musicplayer.data.db.ArtistImageDao
 import kotlin.coroutines.coroutineContext
 
-@Database(entities = [Artist::class], version = 4, exportSchema = false)
+@Database(entities = [Artist::class, ArtistImage::class], version = 8, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ArtistDatabase: RoomDatabase() {
 
     abstract fun artistDao(): ArtistDao
+    abstract fun artistImageDao(): ArtistImageDao
 
     companion object {
         fun getDatabase(context: Context): ArtistDatabase {

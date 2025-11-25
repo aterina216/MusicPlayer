@@ -8,6 +8,7 @@ import com.example.musicplayer.data.db.ArtistDatabase
 import com.example.musicplayer.data.remote.api.DeezerApi
 import com.example.musicplayer.data.remote.api.LastFmApi
 import com.example.musicplayer.data.remote.api.RetrofitClient
+import com.example.musicplayer.data.db.ArtistImageDao
 import com.example.musicplayer.data.repository.ArtistRepository
 import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
 import com.example.musicplayer.ui.viewmodel.ViewModelFactory
@@ -50,6 +51,12 @@ class AppModule(private val application: Application) {
 
     @Singleton
     @Provides
+    fun providesImageDao(dataBase: ArtistDatabase): ArtistImageDao {
+        return dataBase.artistImageDao()
+    }
+
+    @Singleton
+    @Provides
     fun provideLastFmApi(): LastFmApi {
         return Retrofit.Builder()
             .baseUrl(RetrofitClient.BASE_URL)
@@ -73,9 +80,10 @@ class AppModule(private val application: Application) {
     fun provideRepository(
         lastFmApi: LastFmApi,
         dao: ArtistDao,
+        imageDao: ArtistImageDao,
         deezerApi: DeezerApi
     ): ArtistRepository {
-        return ArtistRepository(lastFmApi, dao, deezerApi)
+        return ArtistRepository(lastFmApi, dao, imageDao, deezerApi)
     }
 
     @Singleton
