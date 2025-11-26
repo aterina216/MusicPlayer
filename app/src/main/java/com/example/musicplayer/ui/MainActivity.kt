@@ -9,7 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.example.musicplayer.MusicApp
 import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
-import com.example.musicplayer.ui.artistList.Artistscreen
+import com.example.musicplayer.ui.navigation.InitNavigation
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
@@ -31,8 +31,11 @@ class MainActivity : ComponentActivity() {
 
                 val artists by viewmodel._artists.collectAsState()
 
-                Artistscreen(artists, viewmodel)
+                //Artistscreen(artists, viewmodel)
+
+                InitNavigation(viewmodel)
             }
         }
     }
+
 }

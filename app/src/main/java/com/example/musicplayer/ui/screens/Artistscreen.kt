@@ -1,4 +1,4 @@
-package com.example.musicplayer.ui.artistList
+package com.example.musicplayer.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.background
