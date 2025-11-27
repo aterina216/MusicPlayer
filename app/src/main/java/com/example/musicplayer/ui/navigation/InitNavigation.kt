@@ -9,11 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.musicplayer.ui.screens.Artistscreen
 import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.musicplayer.ui.screens.ArtistDetailScreen
 import com.example.musicplayer.ui.screens.FavoriteScreen
 import com.example.musicplayer.ui.screens.SearchScreen
 
@@ -31,7 +34,7 @@ fun InitNavigation(viewmodel: ArtistViewmodel) {
 
         NavHost(navController, "artists", modifier = Modifier.padding(paddingValues)) {
             composable("artists") {
-                Artistscreen(artists, viewmodel)
+                Artistscreen(artists, viewmodel, navController)
             }
 
             composable("favorite") {
@@ -40,6 +43,14 @@ fun InitNavigation(viewmodel: ArtistViewmodel) {
 
             composable("search") {
                 SearchScreen()
+            }
+
+            composable(
+                "artist_detail/{artistId}",
+                arguments = listOf(navArgument("artistId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val artistId = backStackEntry.arguments?.getString("artistId") ?: ""
+                ArtistDetailScreen(artistId, viewmodel, navController)
             }
         }
 

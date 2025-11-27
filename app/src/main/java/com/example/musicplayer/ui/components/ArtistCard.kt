@@ -1,6 +1,7 @@
 package com.example.musicplayer.ui.components
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,35 +28,46 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.musicplayer.data.remote.dto.Artist
 import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
 
 @Composable
-fun ArtistCard(artist: Artist,
-               viewmodel: ArtistViewmodel,
-               modifier: Modifier) {
-
-    Log.d("ArtistCard", "Rendering: ${artist.name}, images: ${artist.image.size}")
+fun ArtistCard(
+    artist: Artist,
+    viewmodel: ArtistViewmodel,
+    navController: NavController,  // Добавляем навигатор
+    modifier: Modifier
+) {
+    Log.d("ArtistCard", "Rendering: ${artist.name}")
 
     val imageCache by viewmodel.imageCache.collectAsState()
     val imageUrl = imageCache[artist.name]
 
-    Log.d("ArtistCard", "Rendering: ${artist.name}, imageUrl: $imageUrl")
-
-    Card(modifier = Modifier.height(225.dp)
-        .padding(4.dp),
+    Card(
+        modifier = modifier
+            .height(225.dp)
+            .padding(4.dp)
+            .clickable {  // ДОБАВЛЯЕМ ОБРАБОТЧИК КЛИКА
+                // Используем mbid или имя как идентификатор
+                val artistId = artist.mbid ?: artist.name
+                navController.navigate("artist_detail/$artistId")
+            },
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp))
-    {
-        Column(modifier = Modifier.padding(16.dp)
-            .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally){
-
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             AsyncImage(
                 model = imageUrl,
                 contentDescription = artist.name,
-                modifier = Modifier.size(80.dp)
+                modifier = Modifier
+                    .size(80.dp)
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )

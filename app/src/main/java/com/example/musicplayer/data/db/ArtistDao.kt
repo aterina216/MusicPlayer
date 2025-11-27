@@ -27,4 +27,9 @@ interface ArtistDao {
     @Query("DELETE FROM ARTISTS")
     fun deleteAllArtists()
 
+    @Query("SELECT * FROM artists WHERE mbid = :artistId OR name = :artistId")
+    suspend fun getArtistById(artistId: String): Artist?
+
+    @Query("SELECT * FROM artists WHERE name LIKE '%' || :query || '%'")
+    suspend fun searchArtists(query: String): List<Artist>
 }

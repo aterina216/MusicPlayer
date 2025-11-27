@@ -13,13 +13,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.musicplayer.data.remote.dto.Artist
 import com.example.musicplayer.ui.components.ArtistCard
 import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
 
 @Composable
 fun Artistscreen(artist: List<Artist>,
-                 viewmodel: ArtistViewmodel
+                 viewmodel: ArtistViewmodel,
+                 navController: NavController
 ) {
 
     Log.d("Artistscreen", "Получено артистов: ${artist.size}")
@@ -35,7 +37,12 @@ fun Artistscreen(artist: List<Artist>,
             columns = GridCells.Adaptive(100.dp)
         ) {
             items(artist) { artistItem ->
-                ArtistCard(artistItem, viewmodel, modifier = Modifier.fillMaxWidth())
+                ArtistCard(
+                    artist = artistItem,
+                    viewmodel = viewmodel,
+                    navController = navController,  // Передаем навигатор
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }

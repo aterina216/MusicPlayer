@@ -7,6 +7,7 @@ import com.example.musicplayer.data.remote.api.LastFmApi
 import com.example.musicplayer.data.remote.dto.Artist
 import com.example.musicplayer.data.remote.dto.ArtistImage
 import com.example.musicplayer.data.db.ArtistImageDao
+import com.example.musicplayer.data.remote.dto.ArtistDetails
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -109,6 +110,87 @@ class ArtistRepository @Inject constructor(
             } else null
         } catch (e: Exception) {
             null
+        }
+    }
+
+    suspend fun getArtistById(artistId: String): Artist? {
+        return try {
+            val artist = dao.getArtistById(artistId)
+            Log.d("Repository", "🔍 Found artist by ID '$artistId': ${artist?.name}")
+            artist
+        }
+        catch (e: Exception){
+            print("${e.message}")
+            return null
+        }
+    }
+
+    suspend fun getArtistDetails(artistId: String): ArtistDetails? {
+        return try {
+            val artist = dao.getArtistById(artistId)
+            if (artist == null) {
+                Log.d("Repository", "❌ Artist not found in DB: $artistId")
+                return null
+            }
+            val bio = getArtistBio(artist.name)
+            val highResImage = getHighResImage(artist.name)
+
+            Log.d("Repository", "✅ Loaded full details for: ${artist.name}")
+
+            ArtistDetails(
+                artist = artist,
+                bio = bio,
+                highResImageUrl = highResImage
+            )
+        }
+        catch (e: Exception) {
+            print("${e.message}")
+            null
+        }
+    }
+
+    suspend fun getArtistBio(artistName: String): String?{
+        return try {
+            val response = api.getArtistInfo(artist = artistName)
+            if (response.isSuccessful) {
+                val bio = response.body()?.artist?.bio?.summary
+                Log.d("Repository", "📖 Loaded bio for $artistName: ${bio?.take(50)}...")
+                bio?.replace(Regex("<[^>]*>"), "")?.trim()
+            }
+            else {
+                Log.d("Repository", "❌ Bio API error: ${response.code()}")
+                null
+            }
+        }
+        catch (e: Exception) {
+            Log.e("Repository", "❌ Error getting artist bio: ${e.message}")
+            null
+        }
+    }
+
+    private suspend fun getHighResImage(artistName: String): String? {
+        return try {
+            val response = deezerApi.searchArtist(artistName)
+            if(response.isSuccessful){
+                val deezerArtist = response.body()?.data?.firstOrNull()
+                deezerArtist?.picture_big ?: deezerArtist?.picture_medium
+            }
+            else null
+        }
+        catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun searchArtists(query: String): List<Artist> {
+        return try {
+            val results = dao.searchArtists(query)
+            Log.d("Repository", "🔍 Search for '$query' found ${results.size} results")
+            results
+        }
+        catch (e: Exception) {
+            Log.e("Repository", "❌ Error searching artists: ${e.message}")
+            emptyList()
         }
     }
 }
