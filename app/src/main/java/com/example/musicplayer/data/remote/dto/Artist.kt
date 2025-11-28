@@ -18,5 +18,8 @@ data class Artist(
     val url: String,
 
     @ColumnInfo(name = "deezer_image_url")
-    val deezerImageUrl: String? = null
+    val deezerImageUrl: String? = null,
+
+    @ColumnInfo(name = "is_favorite")
+    var isFavorite: Boolean = false
 )

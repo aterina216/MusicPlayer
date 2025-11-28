@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
 
                 val viewmodel: ArtistViewmodel = viewmodel
 
-                val artists by viewmodel._artists.collectAsState()
+                //val artists by viewmodel._artists.collectAsState()
 
                 //Artistscreen(artists, viewmodel)
 
@@ -37,5 +37,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }

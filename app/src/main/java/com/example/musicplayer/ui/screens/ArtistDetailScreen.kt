@@ -3,6 +3,7 @@ package com.example.musicplayer.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.collection.intIntMapOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,10 +40,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.musicplayer.data.remote.dto.ArtistDetails
@@ -97,13 +102,14 @@ fun ArtistDetailScreen(
                 Text("Артист не найден")
             }
         } else {
-            ArtistDetailContent(artistDetails!!)
+            ArtistDetailContent(artistDetails!!, viewModel)
         }
     }
 }
 
 @Composable
-fun ArtistDetailContent(artistDetails: ArtistDetails) {
+fun ArtistDetailContent(artistDetails: ArtistDetails,
+                        artistViewmodel: ArtistViewmodel) {
     val artist = artistDetails.artist
     val context = LocalContext.current
 
@@ -179,21 +185,45 @@ fun ArtistDetailContent(artistDetails: ArtistDetails) {
         item {
             // Ссылка
             if (artist.url.isNotBlank()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text("ССЫЛКИ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Last.fm профиль",
-                        color = Color.Blue,
-                        modifier = Modifier.clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(artist.url))
-                            context.startActivity(intent)
-                        }
-                    )
+
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                    ) {
+                        Text("ССЫЛКИ", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Last.fm профиль",
+                            color = Color.Blue,
+                            modifier = Modifier.clickable {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(artist.url))
+                                context.startActivity(intent)
+                            }
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            var favorite = !artist.isFavorite
+                            artistViewmodel.toggleFavorite(artist.id)
+                            artistViewmodel.updateFavoriteStatus(artist.id, favorite)
+                        },
+                        modifier = Modifier.size(100.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (artist.isFavorite) {
+                                Icons.Filled.Favorite
+                            }
+                            else {
+                                Icons.Outlined.Favorite
+                            },
+                            contentDescription = "Избранное",
+                            tint = if (artist.isFavorite) Color.Red else Color.Gray
+                        )
+                    }
                 }
             }
         }

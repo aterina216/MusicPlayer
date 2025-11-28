@@ -11,6 +11,9 @@ import com.example.musicplayer.data.remote.dto.ArtistDetails
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
@@ -192,5 +195,17 @@ class ArtistRepository @Inject constructor(
             Log.e("Repository", "❌ Error searching artists: ${e.message}")
             emptyList()
         }
+    }
+
+    suspend fun toggleFavorite(artistId: Long){
+        val currentArtists = dao.getAllArtists().first()  // ← Исправили
+        val currentArtist = currentArtists.find { it.id == artistId }
+        currentArtist?.let {
+            dao.toggleFavorite(artistId)
+        }
+    }
+
+    suspend fun loadFavorites(): List<Artist> {
+        return dao.getFavoriteArtists().first()  // ← Исправили
     }
 }

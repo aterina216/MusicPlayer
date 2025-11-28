@@ -3,6 +3,7 @@ package com.example.musicplayer.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.util.copy
 import com.example.musicplayer.data.remote.dto.Artist
 import com.example.musicplayer.data.remote.dto.ArtistDetails
 import com.example.musicplayer.data.repository.ArtistRepository
@@ -29,9 +30,13 @@ class ArtistViewmodel @Inject constructor (val repository: ArtistRepository): Vi
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    private var favoriteArtists = MutableStateFlow<List<Artist>>(emptyList())
+    val _favoriteArtists = favoriteArtists.asStateFlow()
+
     init {
         Log.d("ViewModel", "🚀 ViewModel created")
         loadTopArtists()
+        loadFavoriteArtists()
     }
 
     fun loadTopArtists() {
@@ -100,6 +105,37 @@ class ArtistViewmodel @Inject constructor (val repository: ArtistRepository): Vi
             }
             catch (e: Exception) {
                 Log.e("ViewModel", "❌ Search error: ${e.message}")
+            }
+        }
+    }
+
+    fun toggleFavorite(artistId: Long) {
+        viewModelScope.launch {
+            repository.toggleFavorite(artistId)
+            loadFavoriteArtists()
+        }
+    }
+
+    fun updateFavoriteStatus(artistId: Long, isFavorite: Boolean) {
+        viewModelScope.launch {
+            _selectedArtist?.value?.let {
+                currentDetails ->
+                if (currentDetails.artist.id == artistId) {
+                    val updateArtist = currentDetails.artist.copy(isFavorite = isFavorite)
+                    val updateDetails = currentDetails.copy(updateArtist)
+                    _selectedArtist.value = updateDetails
+                }
+            }
+        }
+    }
+
+    fun loadFavoriteArtists() {
+        viewModelScope.launch {
+            try {
+                favoriteArtists.value = repository.loadFavorites()
+            }
+            catch (e: Exception) {
+                print("${e.message}")
             }
         }
     }

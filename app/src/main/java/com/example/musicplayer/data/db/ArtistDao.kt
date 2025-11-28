@@ -7,6 +7,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.musicplayer.data.remote.dto.Artist
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import retrofit2.http.DELETE
 
 @Dao
@@ -32,4 +34,19 @@ interface ArtistDao {
 
     @Query("SELECT * FROM artists WHERE name LIKE '%' || :query || '%'")
     suspend fun searchArtists(query: String): List<Artist>
+
+    @Query("UPDATE artists SET is_favorite = :isFavorite WHERE id = :artistId")
+    suspend fun setFavorite(isFavorite: Boolean, artistId: String)
+
+    @Query("SELECT * FROM artists WHERE is_favorite = 1")
+    fun getFavoriteArtists(): Flow<List<Artist>>
+
+    @Query("UPDATE artists \n" +
+            "SET is_favorite = CASE \n" +
+            "                   WHEN is_favorite = 1 THEN 0 \n" +
+            "                   ELSE 1 \n" +
+            "                 END \n" +
+            "WHERE id = :artistId")
+    suspend fun toggleFavorite(artistId: Long)
+
 }
