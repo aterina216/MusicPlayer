@@ -49,4 +49,7 @@ interface ArtistDao {
             "WHERE id = :artistId")
     suspend fun toggleFavorite(artistId: Long)
 
+    @Query("SELECT DISTINCT * FROM artists ORDER BY listeners DESC LIMIT 50")
+    fun getPopularArtists(): Flow<List<Artist>>
+
 }

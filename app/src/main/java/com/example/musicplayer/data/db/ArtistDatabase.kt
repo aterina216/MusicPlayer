@@ -11,7 +11,7 @@ import com.example.musicplayer.data.remote.dto.ArtistImage
 import com.example.musicplayer.data.db.ArtistImageDao
 import kotlin.coroutines.coroutineContext
 
-@Database(entities = [Artist::class, ArtistImage::class], version = 10, exportSchema = false)
+@Database(entities = [Artist::class, ArtistImage::class], version = 11, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class ArtistDatabase: RoomDatabase() {
 

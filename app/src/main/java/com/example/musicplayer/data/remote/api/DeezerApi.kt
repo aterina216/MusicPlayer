@@ -11,4 +11,10 @@ interface DeezerApi {
     suspend fun searchArtist(
         @Query("q") artistName: String
     ) : Response<DeezerResponse>
+
+    @GET("search/artist")
+    suspend fun searchArtist(
+        @Query("q") artistName: String,
+        @Query("limit") limit: Int = 20
+    ): Response<DeezerResponse>
 }

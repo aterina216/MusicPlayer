@@ -10,6 +10,7 @@ import com.example.musicplayer.data.remote.api.LastFmApi
 import com.example.musicplayer.data.remote.api.RetrofitClient
 import com.example.musicplayer.data.db.ArtistImageDao
 import com.example.musicplayer.data.repository.ArtistRepository
+import com.example.musicplayer.data.repository.LastFmResponseMapper
 import com.example.musicplayer.ui.viewmodel.ArtistViewmodel
 import com.example.musicplayer.ui.viewmodel.ViewModelFactory
 import dagger.Module
@@ -75,15 +76,22 @@ class AppModule(private val application: Application) {
             .create(DeezerApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideLastFmResponseMapper(): LastFmResponseMapper {
+        return LastFmResponseMapper()
+    }
+
     @Singleton
     @Provides
     fun provideRepository(
         lastFmApi: LastFmApi,
         dao: ArtistDao,
         imageDao: ArtistImageDao,
-        deezerApi: DeezerApi
+        deezerApi: DeezerApi,
+        mapper: LastFmResponseMapper
     ): ArtistRepository {
-        return ArtistRepository(lastFmApi, dao, imageDao, deezerApi)
+        return ArtistRepository(lastFmApi, dao, imageDao, deezerApi, mapper)
     }
 
     @Singleton

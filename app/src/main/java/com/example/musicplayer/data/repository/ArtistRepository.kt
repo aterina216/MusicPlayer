@@ -16,13 +16,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toSet
 import javax.inject.Inject
 
 class ArtistRepository @Inject constructor(
     private val api: LastFmApi,
     private val dao: ArtistDao,
     private val imageDao: ArtistImageDao,
-    private val deezerApi: DeezerApi
+    private val deezerApi: DeezerApi,
+    private val mapper: LastFmResponseMapper
 ) {
     private val _imageCache = mutableMapOf<String, String>()
     val imageCache: Map<String, String> get() = _imageCache
@@ -37,10 +39,15 @@ class ArtistRepository @Inject constructor(
         val cachedArtists = dao.getAllArtists().first()
         Log.d("Repository", "📊 cachedArtists from DB: ${cachedArtists.size}")
 
-        if (cachedArtists.isNotEmpty()) {
+            /* if (cachedArtists.isNotEmpty()) {
             Log.d("Repository", "🔄 USING CACHED ARTISTS from DB")
             Log.d("Repository", "🎯 RETURNING CACHED: ${cachedArtists.size} artists, imageCache: ${_imageCache.size}")
             return cachedArtists
+        } */
+
+        if(cachedArtists.isNotEmpty()) {
+
+            return dao.getPopularArtists().first()
         }
 
         return loadArtistsFromNetwork()
@@ -185,7 +192,7 @@ class ArtistRepository @Inject constructor(
         }
     }
 
-    suspend fun searchArtists(query: String): List<Artist> {
+    suspend fun searchArtistsFromDb(query: String): List<Artist> {
         return try {
             val results = dao.searchArtists(query)
             Log.d("Repository", "🔍 Search for '$query' found ${results.size} results")
@@ -208,4 +215,61 @@ class ArtistRepository @Inject constructor(
     suspend fun loadFavorites(): List<Artist> {
         return dao.getFavoriteArtists().first()  // ← Исправили
     }
+
+    suspend fun searchArtistsOnline(query: String): List<Artist> {
+        Log.d("SEARCH_REPO", "🎯 Начинаем поиск: '$query'")
+
+        return try {
+            // 1. Делаем запрос к Last.fm
+            val lastFmResponse = api.searchArtists(artist = query)
+            Log.d("SEARCH_REPO", "📡 Last.fm response: ${lastFmResponse.isSuccessful}, code: ${lastFmResponse.code()}")
+
+            if (!lastFmResponse.isSuccessful) {
+                Log.e("SEARCH_REPO", "❌ Last.fm error: ${lastFmResponse.errorBody()?.string()}")
+                return emptyList()
+            }
+
+            val searchResponse = lastFmResponse.body()
+            if (searchResponse == null) {
+                Log.e("SEARCH_REPO", "❌ Last.fm body is null")
+                return emptyList()
+            }
+
+            // 2. Логируем структуру ответа
+            val artistsCount = searchResponse.results.artistMatches.artist.size
+            Log.d("SEARCH_REPO", "📊 Last.fm нашёл: $artistsCount артистов")
+
+            searchResponse.results.artistMatches.artist.take(3).forEach { artist ->
+                Log.d("SEARCH_REPO", "   - ${artist.name} (images: ${artist.image?.size ?: 0})")
+            }
+
+            // 3. Получаем картинки с Deezer для найденных артистов
+            val deezerImages = mutableMapOf<String, String>()
+            for (searchItem in searchResponse.results.artistMatches.artist) {
+                val deezerImageUrl = getImages(searchItem.name)
+                if (deezerImageUrl != null) {
+                    deezerImages[searchItem.name] = deezerImageUrl
+                    Log.d("SEARCH_REPO", "🖼️ Картинка для ${searchItem.name}: $deezerImageUrl")
+                }
+            }
+
+            // 4. Используем маппер для преобразования
+            val result = mapper.mapSearchResponseToArtists(searchResponse, deezerImages)
+            Log.d("SEARCH_REPO", "✅ Маппер преобразовал: ${result.size} артистов")
+
+            if (result.isNotEmpty()) {
+                dao.insertArtists(result)
+                Log.d("SEARCH_REPO", "💾 Сохранено в БД: ${result.size} артистов")
+            }
+
+            Log.d("SEARCH_REPO", "✅ Маппер преобразовал: ${result.size} артистов")
+
+            result
+
+        } catch (e: Exception) {
+            Log.e("SEARCH_REPO", "💥 Ошибка поиска: ${e.message}", e)
+            emptyList()
+        }
+    }
+
 }

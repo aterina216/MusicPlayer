@@ -26,6 +26,7 @@ fun InitNavigation(viewmodel: ArtistViewmodel) {
     val navController = rememberNavController()
     val artists by viewmodel._artists.collectAsState()
     val favoriteArtists by viewmodel._favoriteArtists.collectAsState()
+    val searchResults by viewmodel.searchResults.collectAsState()
 
     Scaffold(bottomBar = {
         MyBottomNavigation(navController)
@@ -43,7 +44,7 @@ fun InitNavigation(viewmodel: ArtistViewmodel) {
             }
 
             composable("search") {
-                SearchScreen()
+                SearchScreen(viewmodel, navController)
             }
 
             composable(
