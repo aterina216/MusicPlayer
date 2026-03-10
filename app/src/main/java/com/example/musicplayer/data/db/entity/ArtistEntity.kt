@@ -10,7 +10,7 @@ data class ArtistEntity(
     val id: Int,
     val imageUrl: String,
     val listeners: String,
-    val mbid: String,
+    val mbid: String?,
     val name: String,
     val playcount: String,
     val streamable: String,

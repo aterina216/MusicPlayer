@@ -18,7 +18,8 @@ class DataBaseModule {
             context,
             ArtistDataBase::class.java,
             "artist_database"
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
