@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.example.musicplayer.data.db.dao.ArtistsDao
 import com.example.musicplayer.data.db.entity.ArtistEntity
 
-@Database(entities = [ArtistEntity::class], version = 2)
+@Database(entities = [ArtistEntity::class], version = 4)
 abstract class ArtistDataBase: RoomDatabase() {
 
     abstract fun artistDao(): ArtistsDao

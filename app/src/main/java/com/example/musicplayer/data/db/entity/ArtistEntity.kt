@@ -8,7 +8,7 @@ import com.example.musicplayer.data.api.models.Image
 data class ArtistEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val imageUrl: String,
+    var imageUrl: String? = null,
     val listeners: String,
     val mbid: String?,
     val name: String,

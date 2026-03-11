@@ -1,5 +1,6 @@
 package com.example.musicplayer.ui.functions
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -16,13 +17,14 @@ import com.example.musicplayer.ui.components.ArtistItem
 fun PopularArtists(artists: List<ArtistEntity>) {
 
     LazyVerticalGrid(
-            columns = GridCells.Fixed(4),
-            modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp)
+        columns = GridCells.Fixed(3),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(artists) {
-            artist ->
-                ArtistItem(artist)
+        items(artists) { artist ->
+            ArtistItem(artist)
         }
     }
 }

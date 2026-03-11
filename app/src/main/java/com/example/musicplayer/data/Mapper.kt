@@ -9,7 +9,6 @@ object Mapper {
     fun Artist.toEntity(): ArtistEntity {
         return ArtistEntity(
             id = 0,
-            imageUrl = getImageUrl(this.image),
             listeners = this.listeners,
             mbid = this.mbid,
             name = this.name,

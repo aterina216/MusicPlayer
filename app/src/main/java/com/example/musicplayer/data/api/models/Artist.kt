@@ -1,7 +1,7 @@
 package com.example.musicplayer.data.api.models
 
 data class Artist(
-    val image: List<Image>,
+    var image: List<Image>,
     val listeners: String,
     val mbid: String,
     val name: String,
