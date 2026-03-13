@@ -36,12 +36,12 @@ private val LightColorScheme = lightColorScheme(
     onPrimaryContainer = Color(0xFF00210A),
     secondary = Color(0xFF666666),
     onSecondary = Color.White,
-    background = Color(0xFFFFFFFF),
+    background = Color(0xFFF0F0FF),
     onBackground = Color(0xFF121212),
     surface = Color(0xFFF5F5F5),
     onSurface = Color(0xFF121212),
     surfaceVariant = Color(0xFFE0E0E0),
-    onSurfaceVariant = Color(0xFF666666)
+    onSurfaceVariant = Color(0xFF666666),
 )
 
 @Composable

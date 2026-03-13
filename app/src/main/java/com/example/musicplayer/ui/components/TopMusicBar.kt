@@ -26,6 +26,7 @@ fun TopMusicBar() {
                 maxLines = 1
             )
         },
+        modifier = Modifier.height(80.dp),
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
